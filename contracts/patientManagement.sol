@@ -4,40 +4,60 @@ pragma solidity ^0.8.0;
 // Admin, Patient
 
 contract PatientManagement {
-    address adminAddress;
+    address public ownerAddress;
 
-    uint initialPatientId = 0;
+    uint private initialPatientId = 0;
 
-    Patient[] public patientList;
+    User[] public patientList;
+    mapping(address => uint) isAdmin;
 
-    struct Patient {
+    struct User {
         uint256 patientId;
-        bytes12 age;
-        bytes12 gender; // 1 - male, 2- female;
+        uint256 age;
+        uint256 gender; // 1 - male, 2- female;
         VaccineStatus vaccineStatus; // 0, 1, 2
         string district;
         string symptomsDetails;
         bool isDead;
         address patientAddress;
+        UserType userType;
     }
     enum VaccineStatus {
         not_vaccinated,
         one_dose,
         two_dose
     }
+    enum UserType {
+        admin,
+        patient
+    }
 
     constructor() {
-        adminAddress = msg.sender;
+        ownerAddress = msg.sender;
+        patientList.push(
+            User(
+                1,
+                25,
+                1,
+                VaccineStatus.not_vaccinated,
+                "admin",
+                "admin",
+                false,
+                ownerAddress,
+                UserType.admin
+            )
+        );
+        isAdmin[ownerAddress] = 1;
     }
 
     // Storing patient data
     function storePatientData(
-        bytes12 _age,
-        bytes12 _gender,
+        uint256 _age,
+        uint256 _gender,
         string memory _district,
         string memory _symptomsDetails
     ) public {
-        Patient memory tempPatient = Patient(
+        User memory tempPatient = User(
             initialPatientId + 1,
             _age,
             _gender,
@@ -45,7 +65,8 @@ contract PatientManagement {
             _district,
             _symptomsDetails,
             false,
-            msg.sender
+            msg.sender,
+            UserType.patient
         );
 
         patientList.push(tempPatient);
@@ -54,7 +75,7 @@ contract PatientManagement {
 
     modifier onlyAdminAccess() {
         require(
-            msg.sender != adminAddress,
+            isAdmin[msg.sender] == 1,
             "Only admin can access this function"
         );
         _;
