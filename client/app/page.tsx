@@ -1,6 +1,7 @@
 "use client";
 import Table from '@/components/ui/Table';
-import React, { FormEvent } from 'react';
+import React, { FormEvent, useEffect } from 'react';
+import { getPatientDataList } from '@/web3/web3Actions';
 
 
 async function handleFormSubmit(event: FormEvent<HTMLFormElement>) {
@@ -11,8 +12,18 @@ async function handleFormSubmit(event: FormEvent<HTMLFormElement>) {
 
   });
 }
+async function getPatientData() {
+  const patientData = await getPatientDataList();
+  console.log(patientData);
+
+}
 
 const page = () => {
+  useEffect(() => {
+    getPatientData();
+
+  }, []);
+
   return (
     <div>
       <Table />
