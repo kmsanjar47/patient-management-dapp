@@ -1,15 +1,40 @@
 "use client";
-import React, { createContext, useContext, useState } from "react";
+import React, { ReactNode, createContext, useContext, useState } from "react";
 
-const Web3Context = createContext(undefined); // Create context
+// Define the type for context value
+interface Web3ContextType {
+    currentAccount: string | null;
+    setCurrentAccount: React.Dispatch<React.SetStateAction<string | null>>;
+}
 
-export const useWeb3 = () => useContext(Web3Context); // Custom hook to consume context
+// Create context with defined type
+const Web3Context = createContext<Web3ContextType | undefined>(undefined);
 
-export const Web3Provider = ({ children }) => { // Context provider component
-    const [currentAccount, setCurrentAccount] = useState(null);
+// Custom hook to consume context
+export const useWeb3 = () => {
+    const context = useContext(Web3Context);
+    if (!context) {
+        throw new Error("useWeb3 must be used within a Web3Provider");
+    }
+    return context;
+}
+
+// Define props type for Web3Provider component
+interface Web3ProviderProps {
+    children: ReactNode;
+}
+
+// Context provider component
+export const Web3Provider = ({ children }: Web3ProviderProps) => {
+    const [currentAccount, setCurrentAccount] = useState<string | null>(null);
+
+    const value: Web3ContextType = {
+        currentAccount,
+        setCurrentAccount
+    };
 
     return (
-        <Web3Context.Provider value={{ currentAccount, setCurrentAccount }}> 
+        <Web3Context.Provider value={value}>
             {children}
         </Web3Context.Provider>
     );

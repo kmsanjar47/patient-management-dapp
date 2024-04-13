@@ -1,18 +1,22 @@
 "use client";
-import React, { FormEvent } from 'react'
+import Table from '@/components/ui/Table';
+import React, { FormEvent } from 'react';
+
 
 async function handleFormSubmit(event: FormEvent<HTMLFormElement>) {
   event.preventDefault();
   const formData = new FormData(event.currentTarget);
   formData.forEach((value, key) => {
     console.log(key, value);
+
   });
 }
 
 const page = () => {
   return (
     <div>
-      <form onSubmit={handleFormSubmit}>
+      <Table />
+      {/* <form onSubmit={handleFormSubmit}>
         <div>
           <label htmlFor="name">Name</label>
           <input className="border border-gray-300 rounded-md p-2" type="text" id="name" name='name' />
@@ -46,7 +50,7 @@ const page = () => {
         <button className="bg-blue-500 text-white p-2 rounded-md" type="submit">Submit</button>
 
 
-      </form>
+      </form> */}
     </div>
   )
 }
