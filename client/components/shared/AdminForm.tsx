@@ -14,8 +14,8 @@ const AdminForm = () => {
         console.log('Form Data From Admin:', data);
         try {
 
-            await updateVaccineStatus(data.patientId, data.vaccineStatus);
-            await updateDeadStatus(data.patientId, data.isDead === 'true' ? true : false);
+            await updateVaccineStatus(data.patientId + 1, data.vaccineStatus);
+            await updateDeadStatus(data.patientId + 1, data.isDead === 'true' ? true : false);
 
         } catch (error) {
             console.error('Error while updating vaccine status or dead status:', error);

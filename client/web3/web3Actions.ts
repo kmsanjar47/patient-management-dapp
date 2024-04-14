@@ -8,7 +8,7 @@ if (typeof window !== "undefined" && window.ethereum) {
 }
 
 // Contract address
-const contractAddress = "0x68634CD396d1Eb1E2270Bd1Dbd05a64046594916"; // Update with your contract address
+const contractAddress = "0x2790139d3343F164786BA3a360809C68a252C711"; // Update with your contract address
 
 // Create contract instance
 let contract: any;

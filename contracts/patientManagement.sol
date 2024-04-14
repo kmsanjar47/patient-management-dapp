@@ -10,6 +10,7 @@ contract PatientManagement {
 
     User[] public patientList;
     mapping(address => uint) isAdmin;
+    mapping(address => bool) isAlreadyPatient;
 
     struct User {
         uint256 patientId;
@@ -45,6 +46,14 @@ contract PatientManagement {
         _;
     }
 
+    modifier validPatientAddress(address _patientAddress) {
+        require(
+            isAlreadyPatient[_patientAddress] == true,
+            "Patient Already Exists!"
+        );
+        _;
+    }
+
     constructor() {
         ownerAddress = msg.sender;
         patientList.push(
@@ -71,7 +80,7 @@ contract PatientManagement {
         string memory _symptomsDetails,
         VaccineStatus _vaccineStatus,
         bool _isDead
-    ) public {
+    ) public validPatientAddress(msg.sender) {
         User memory tempPatient = User(
             initialPatientId + 1,
             _age,
@@ -86,6 +95,7 @@ contract PatientManagement {
 
         patientList.push(tempPatient);
         isAdmin[msg.sender] = 0;
+        isAlreadyPatient[msg.sender] = true;
         initialPatientId++;
     }
 
