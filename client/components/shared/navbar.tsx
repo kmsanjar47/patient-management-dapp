@@ -1,18 +1,24 @@
 "use client";
-import { connectMetamask } from '@/web3/web3Actions';
+import { connectMetamask, checkIfAdmin } from '@/web3/web3Actions';
 import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { useWeb3 } from '@/web3/web3Provider';
 
 const Navbar = () => {
-    const { currentAccount, setCurrentAccount } = useWeb3();
+    const { currentAccount, setCurrentAccount, setIsAdmin, isAdmin } = useWeb3();
     useEffect(() => {
-        console.log(currentAccount);
-    }, [currentAccount]);
+        // console.log(currentAccount);
+        // console.log(isAdmin);
+    }, [currentAccount, isAdmin]);
 
-    async function handleConnectWallet() {
-        await connectMetamask()!.then((account) => {
+    async function handleConnectWalletAndDefineUserType
+        () {
+        await connectMetamask()!.then(async (account) => {
             setCurrentAccount(account);
+            await checkIfAdmin(account).then((result) => {
+                setIsAdmin(result);
+            });
+
         });
 
     }
@@ -31,7 +37,8 @@ const Navbar = () => {
                     <Link href='/' className='hover:text-gray-400'>Home </Link>
                     <Link href='/register' className='hover:text-gray-400'>Register</Link>
                     <Link href='/certificate' className='hover:text-gray-400'>Certificate</Link>
-                    {currentAccount ? <button className='bg-white text-black px-4 py-2 rounded' onClick={disconnectWalletAndResetAccountState}>Disconnect Wallet</button> : <button className='bg-white text-black px-4 py-2 rounded' onClick={handleConnectWallet}>Connect Wallet</button>}
+                    {currentAccount ? <button className='bg-white text-black px-4 py-2 rounded' onClick={disconnectWalletAndResetAccountState}>Disconnect Wallet</button> : <button className='bg-white text-black px-4 py-2 rounded' onClick={handleConnectWalletAndDefineUserType
+                    }>Connect Wallet</button>}
 
                 </div>
             </div>

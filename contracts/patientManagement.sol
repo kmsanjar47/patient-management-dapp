@@ -49,7 +49,7 @@ contract PatientManagement {
         ownerAddress = msg.sender;
         patientList.push(
             User(
-                1,
+                initialPatientId,
                 25,
                 1,
                 VaccineStatus.not_vaccinated,
@@ -128,5 +128,12 @@ contract PatientManagement {
 
     function getPatientDataList() public view returns (User[] memory) {
         return patientList;
+    }
+
+    function checkIfAdmin(address _adminAddress) public view returns (bool) {
+        if (isAdmin[_adminAddress] == 1) {
+            return true;
+        }
+        return false;
     }
 }

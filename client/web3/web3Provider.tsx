@@ -5,6 +5,8 @@ import React, { ReactNode, createContext, useContext, useState } from "react";
 interface Web3ContextType {
     currentAccount: string | null;
     setCurrentAccount: React.Dispatch<React.SetStateAction<string | null>>;
+    isAdmin: boolean;
+    setIsAdmin: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // Create context with defined type
@@ -27,10 +29,13 @@ interface Web3ProviderProps {
 // Context provider component
 export const Web3Provider = ({ children }: Web3ProviderProps) => {
     const [currentAccount, setCurrentAccount] = useState<string | null>(null);
+    const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
     const value: Web3ContextType = {
         currentAccount,
-        setCurrentAccount
+        setCurrentAccount,
+        isAdmin,
+        setIsAdmin
     };
 
     return (

@@ -13,7 +13,7 @@ const Table = () => {
 		}
 		getPatientDataList().then((data) => {
 			setData(data);
-			console.log(data);
+			// console.log(data);
 		});
 	}, [currentAccount]);
 	// Sample data for demonstration
