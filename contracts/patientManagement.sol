@@ -13,7 +13,7 @@ contract PatientManagement {
 
     struct User {
         uint256 patientId;
-        uint256 age;
+        uint8 age;
         uint256 gender; // 1 - male, 2- female;
         VaccineStatus vaccineStatus; // 0, 1, 2
         string district;
@@ -53,8 +53,8 @@ contract PatientManagement {
                 25,
                 1,
                 VaccineStatus.not_vaccinated,
-                "admin",
-                "admin",
+                "Dhaka",
+                "Headache",
                 false,
                 ownerAddress,
                 UserType.admin
@@ -65,7 +65,7 @@ contract PatientManagement {
 
     // Storing patient data
     function storePatientData(
-        uint256 _age,
+        uint8 _age,
         uint256 _gender,
         string memory _district,
         string memory _symptomsDetails,
@@ -91,7 +91,7 @@ contract PatientManagement {
 
     function storeAdminData(
         address _refAdminAddress,
-        uint256 _age,
+        uint8 _age,
         uint256 _gender,
         string memory _district
     ) public validRefAdminAddress(_refAdminAddress) {
