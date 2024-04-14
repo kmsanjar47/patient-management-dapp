@@ -1,33 +1,20 @@
-"use client";
+'use client';
 import Table from '@/components/ui/Table';
-import React, { FormEvent, useEffect } from 'react';
-import { getPatientDataList } from '@/web3/web3Actions';
-
+import { FormEvent } from 'react';
 
 async function handleFormSubmit(event: FormEvent<HTMLFormElement>) {
-  event.preventDefault();
-  const formData = new FormData(event.currentTarget);
-  formData.forEach((value, key) => {
-    console.log(key, value);
-
-  });
-}
-async function getPatientData() {
-  const patientData = await getPatientDataList();
-  console.log(patientData);
-
+	event.preventDefault();
+	const formData = new FormData(event.currentTarget);
+	formData.forEach((value, key) => {
+		console.log(key, value);
+	});
 }
 
 const page = () => {
-  useEffect(() => {
-    getPatientData();
-
-  }, []);
-
-  return (
-    <div>
-      <Table />
-      {/* <form onSubmit={handleFormSubmit}>
+	return (
+		<div>
+			<Table />
+			{/* <form onSubmit={handleFormSubmit}>
         <div>
           <label htmlFor="name">Name</label>
           <input className="border border-gray-300 rounded-md p-2" type="text" id="name" name='name' />
@@ -62,8 +49,8 @@ const page = () => {
 
 
       </form> */}
-    </div>
-  )
-}
+		</div>
+	);
+};
 
-export default page
+export default page;
