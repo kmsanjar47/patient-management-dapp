@@ -1,11 +1,13 @@
 'use client';
 import React, { FormEvent, useState } from 'react';
 import PatientManagement from '../../../build/contracts/PatientManagement.json';
-import { storePatientData, storeAdminData } from '@/web3/web3Actions';
+import { storePatientData, storeAdminData, checkIfAlreadyPatient } from '@/web3/web3Actions';
 import { useWeb3 } from '@/web3/web3Provider';
+import toast, { Toaster } from 'react-hot-toast';
 
 const Form = () => {
 	const { currentAccount } = useWeb3();
+
 	const [activeTab, setActiveTab] = useState('patient'); // Default active tab is 'patient'
 
 	const handleTabChange = (tab: string) => {
@@ -20,7 +22,15 @@ const Form = () => {
 			data[key] = value;
 		});
 		console.log('Form Data:', data);
+		// Check if the patient is already registered
+		const isPatient = await checkIfAlreadyPatient(currentAccount);
+		if (isPatient) {
+			console.log('Patient is already registered');
+			toast.error('Patient is already registered');
+			return;
+		}
 		await storePatientData(data.age, data.gender, data.district, data.symptomsDetails, data.vaccineStatus, data.isDead === 'true' ? true : false);
+		toast.success('Patient registered successfully');
 	};
 	const handleFormSubmitForAdmin = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -31,6 +41,7 @@ const Form = () => {
 		});
 		console.log('Form Data From Admin:', data);
 		await storeAdminData(data.refAdminAddress, data.age, data.gender, data.district);
+		toast.success('Admin registered successfully');
 	};
 
 	return (
@@ -181,6 +192,7 @@ const Form = () => {
 					</form>
 				</>
 			)}
+			<Toaster />
 		</div>
 	);
 };
