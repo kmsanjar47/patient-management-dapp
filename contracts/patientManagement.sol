@@ -11,8 +11,9 @@ contract PatientManagement {
     User[] public patientList;
     mapping(address => uint) isAdmin;
     mapping(address => uint) isAlreadyPatient;
-    event updatedDeadStatus (uint patientId, bool isDead);
-    event updatedVaccineStatus (uint patientId, VaccineStatus vaccineStatus);
+    mapping(address => uint) vaccinationStatus;
+    event updatedDeadStatus(uint patientId, bool isDead);
+    event updatedVaccineStatus(uint patientId, VaccineStatus vaccineStatus);
 
     struct User {
         uint256 patientId;
@@ -139,10 +140,27 @@ contract PatientManagement {
             )
         );
 
+        vaccinationStatus[ownerAddress] = 0;
+
+        vaccinationStatus[
+            address(0xD8e9698dbA5dF92882478e5f049b2666b00120d0)
+        ] = 1;
+        vaccinationStatus[
+            address(0x67A3688404800d48554448853e6e7028EDB8dEF9)
+        ] = 1;
+        vaccinationStatus[
+            address(0x232Dccb4f2a2e57d085832aa8151Acd4dA5EC0cc)
+        ] = 2;
+        vaccinationStatus[
+            address(0x54a231904E3D11447676BF6025aF240354011228)
+        ] = 0;
+        vaccinationStatus[
+            address(0xA43CaeD907c2987E655E5Fff06800021DCcC356b)
+        ] = 1;
+
         isAdmin[ownerAddress] = 1;
         initialPatientId = 5;
     }
-    
 
     // Storing patient data
     function storePatientData(
@@ -168,6 +186,7 @@ contract PatientManagement {
         patientList.push(tempPatient);
         isAdmin[msg.sender] = 0;
         isAlreadyPatient[msg.sender] = 1;
+        vaccinationStatus[msg.sender] = uint(_vaccineStatus);
         initialPatientId++;
     }
 
@@ -188,7 +207,6 @@ contract PatientManagement {
             msg.sender,
             UserType.admin
         );
-
         patientList.push(tempPatient);
         isAdmin[msg.sender] = 1;
         initialPatientId++;
@@ -199,6 +217,8 @@ contract PatientManagement {
         VaccineStatus _vaccineStatus
     ) public onlyAdminAccess {
         patientList[_patientId].vaccineStatus = _vaccineStatus;
+        address patientAddress = patientList[_patientId].patientAddress;
+        vaccinationStatus[patientAddress] = uint(_vaccineStatus);
         emit updatedVaccineStatus(_patientId, _vaccineStatus);
     }
 
@@ -221,7 +241,18 @@ contract PatientManagement {
         return false;
     }
 
-    function checkIfAlreadyPatient(address _patientAddress) public view returns (bool) {
+    function checkIfFullyVaccinated(
+        address _userAddress
+    ) public view returns (bool) {
+        if (vaccinationStatus[_userAddress] == 2) {
+            return true;
+        }
+        return false;
+    }
+
+    function checkIfAlreadyPatient(
+        address _patientAddress
+    ) public view returns (bool) {
         if (isAlreadyPatient[_patientAddress] == 1) {
             return true;
         }

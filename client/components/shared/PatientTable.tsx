@@ -1,5 +1,7 @@
 import React from 'react';
 import { getContract } from '@/web3/web3Actions';
+import { useWeb3 } from '@/web3/web3Provider';
+// import { getUpdatedDataList } from '@/web3/web3Actions';
 // Define the User type with only required fields
 interface User {
 	patientId: number;
@@ -27,39 +29,40 @@ function vaccineStatusToString(data: any) {
 }
 
 // Table component
-const PatientTable: React.FC<TableProps> = ({ users }) => {
-	const [patients, setPatients] = React.useState<User[]>([]);
+const PatientTable: React.FC<TableProps> = () => {
+	const { data, setData } = useWeb3();
+	// const [patients, setPatients] = useState<User[]>([]);
 
-	React.useEffect(() => {
-		setPatients(users);
-	}, [users]);
+	// useEffect(() => {
+	// 	setUsers(users);
+	// }, [users]);
 
 	const contract = getContract();
 
 	try {
 		contract.events.updatedDeadStatus().on('data', function (event) {
 			console.log('Data Updated:', event.returnValues);
-			const patient = patients.find((p) => p.patientId == event.returnValues.patientId);
-			patient.isDead = event.returnValues.isDead;
-			let newPatients = patients.filter((p) => p.patientId != event.returnValues.patientId);
-			newPatients.push(patient);
-			setPatients([...newPatients]);
+			const patient = data.iterableList.find((p) => p.patientId == event.returnValues.patientId);
+			patient ? patient.isDead = event.returnValues.isDead : 0;
+			let newPatients = data.iterableList.filter((p) => p.patientId != event.returnValues.patientId);
+			newPatients.push(patient!);
+			setData({ ...data, iterableList: newPatients });
 		});
 
 		contract.events.updatedVaccineStatus().on('data', function (event) {
 			console.log('Data Updated:', event.returnValues);
-			const patient = patients.find((p) => p.patientId == event.returnValues.patientId);
-			patient.vaccineStatus = event.returnValues.vaccineStatus;
-			let newPatients = patients.filter((p) => p.patientId != event.returnValues.patientId);
-			newPatients.push(patient);
-			setPatients([...newPatients]);
+			const patient = data.iterableList.find((p) => p.patientId == event.returnValues.patientId);
+			patient ? patient.vaccineStatus = event.returnValues.vaccineStatus : 0;
+			let newPatients = data.iterableList.filter((p) => p.patientId != event.returnValues.patientId);
+			newPatients.push(patient!);
+			setData({ ...data, iterableList: newPatients });
 		});
 	} catch (error) {
 		console.error('Error while updating vaccine status or dead status:', error);
 	}
 
 	// Check if users array is undefined or null
-	if (!users) {
+	if (!data.iterableList) {
 		return <div>No data available</div>;
 	}
 
@@ -92,7 +95,12 @@ const PatientTable: React.FC<TableProps> = ({ users }) => {
 					</tr>
 				</thead>
 				<tbody>
-					{patients.map((user) => (
+					{data.iterableList.sort((a: any, b: any) => {
+						if (typeof a.patientId === 'bigint' && typeof b.patientId === 'bigint') {
+							return a.patientId < b.patientId ? -1 : a.patientId > b.patientId ? 1 : 0;
+						}
+						return a.patientId - b.patientId;
+					}).map((user) => (
 						<tr key={user.patientId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
 							<td className="px-6 py-4 whitespace-nowrap dark:text-white">{user.patientId.toString()}</td>
 							<td className="px-6 py-4">{user.age.toString()}</td>

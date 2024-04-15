@@ -9,7 +9,7 @@ if (typeof window !== 'undefined' && window.ethereum) {
 }
 
 // Contract address
-const contractAddress = '0x35C9dE87554a58a786a8C7f007e1D208129FB8ea'; // Update with your contract address
+const contractAddress = '0x07fFd50896BA235A274570bdf6f296C13e73dFBf'; // Update with your contract address
 
 // Create contract instance
 let contract: any;
@@ -34,11 +34,6 @@ export function connectMetamask(): Promise<string> | undefined {
 export function getContract() {
 	return contract;
 }
-// function deployContract(){
-//     const contract = new web3.eth.Contract(abi);
-//     const deploy = contract.deploy({ data: bytecode, arguments: [1] });
-//     deploy.send({ from: accounts[0], gas: 1500000, gasPrice: "30000000000000" });
-// }
 
 // Function to store patient data
 export const storePatientData = async (
@@ -107,6 +102,31 @@ export const getPatientDataList = async () => {
 	};
 };
 
+
+// export const getUpdatedDataList = async (iterableList:any) => {
+// 	// Call contract method to get patient data list
+// 	const maxCovidDistrict = findMostFrequentDistrict(iterableList);
+// 	const medianAges = calculateMedianAgeByDistrict(iterableList);
+// 	const agePercentage = calculateAgePercentage(iterableList);
+// 	const averageDeathRate = calculateAverageDeathRate(iterableList);
+
+// 	console.log({
+// 		iterableList,
+// 		maxCovidDistrict,
+// 		medianAges,
+// 		agePercentage,
+// 		averageDeathRate,
+// 	});
+
+// 	return {
+// 		iterableList,
+// 		maxCovidDistrict,
+// 		medianAges,
+// 		agePercentage,
+// 		averageDeathRate,
+// 	};
+// };
+
 export const checkIfAdmin = async (address: string): Promise<boolean> => {
 	const isAdmin = await contract.methods.checkIfAdmin(address).call({ from: address });
 	return isAdmin;
@@ -117,6 +137,12 @@ export const checkIfAlreadyPatient = async (address: string): Promise<boolean> =
 	return isPatient;
 };
 
+export const  checkIfFullyVaccinated = async (userAddress: string): Promise<boolean> => {
+	
+  const isFullyVaccinated = await contract.methods.checkIfFullyVaccinated(userAddress).call({ from: userAddress });
+  console.log(isFullyVaccinated);
+  return isFullyVaccinated;
+};
 /////////////// Internal Actions ///////////////
 
 function convertDataToIterableList(data: any) {
