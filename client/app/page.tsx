@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import AdminForm from '@/components/shared/AdminForm';
 import { Toaster } from 'react-hot-toast';
 
-const page = () => {
+const Page = () => {
 	// const [data, setData] = useState([]);
 	const { currentAccount, isAdmin, isVaccinated, setIsVaccinated, data, setData } = useWeb3();
 
@@ -15,7 +15,9 @@ const page = () => {
 		if (!currentAccount) {
 			return;
 		}
+
 		getPatientDataList().then((result: any) => {
+			console.log(result);
 			setData(result);
 			console.log('For Patient Table:', result);
 		});
@@ -24,6 +26,7 @@ const page = () => {
 			console.log('For Certificate:', result);
 		});
 	}, [currentAccount]);
+
 	return (
 		<div className="flex flex-col">
 			<Table />
@@ -38,4 +41,4 @@ const page = () => {
 	);
 };
 
-export default page;
+export default Page;

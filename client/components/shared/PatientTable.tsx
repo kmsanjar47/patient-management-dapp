@@ -29,8 +29,9 @@ function vaccineStatusToString(data: any) {
 }
 
 // Table component
-const PatientTable: React.FC<TableProps> = () => {
+const PatientTable = () => {
 	const { data, setData } = useWeb3();
+
 	// const [patients, setPatients] = useState<User[]>([]);
 
 	// useEffect(() => {
@@ -42,20 +43,22 @@ const PatientTable: React.FC<TableProps> = () => {
 	try {
 		contract.events.updatedDeadStatus().on('data', function (event) {
 			console.log('Data Updated:', event.returnValues);
-			const patient = data.iterableList.find((p) => p.patientId == event.returnValues.patientId);
-			patient ? patient.isDead = event.returnValues.isDead : 0;
-			let newPatients = data.iterableList.filter((p) => p.patientId != event.returnValues.patientId);
+			const patient = data.iterableList ? data.iterableList.find((p) => p.patientId == event.returnValues.patientId) : [];
+			patient ? (patient.isDead = event.returnValues.isDead) : 0;
+			let newPatients = data.iterableList ? data.iterableList.filter((p) => p.patientId != event.returnValues.patientId) : [];
 			newPatients.push(patient!);
-			setData({ ...data, iterableList: newPatients });
+			data.iterableList = newPatients;
+			setData({ ...data });
 		});
 
 		contract.events.updatedVaccineStatus().on('data', function (event) {
 			console.log('Data Updated:', event.returnValues);
-			const patient = data.iterableList.find((p) => p.patientId == event.returnValues.patientId);
-			patient ? patient.vaccineStatus = event.returnValues.vaccineStatus : 0;
-			let newPatients = data.iterableList.filter((p) => p.patientId != event.returnValues.patientId);
+			const patient = data.iterableList ? data.iterableList.find((p) => p.patientId == event.returnValues.patientId) : [];
+			patient ? (patient.vaccineStatus = event.returnValues.vaccineStatus) : 0;
+			let newPatients = data.iterableList ? data.iterableList.filter((p) => p.patientId != event.returnValues.patientId) : [];
 			newPatients.push(patient!);
-			setData({ ...data, iterableList: newPatients });
+			data.iterableList = newPatients;
+			setData({ ...data });
 		});
 	} catch (error) {
 		console.error('Error while updating vaccine status or dead status:', error);
@@ -95,22 +98,24 @@ const PatientTable: React.FC<TableProps> = () => {
 					</tr>
 				</thead>
 				<tbody>
-					{data.iterableList.sort((a: any, b: any) => {
-						if (typeof a.patientId === 'bigint' && typeof b.patientId === 'bigint') {
-							return a.patientId < b.patientId ? -1 : a.patientId > b.patientId ? 1 : 0;
-						}
-						return a.patientId - b.patientId;
-					}).map((user) => (
-						<tr key={user.patientId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-							<td className="px-6 py-4 whitespace-nowrap dark:text-white">{user.patientId.toString()}</td>
-							<td className="px-6 py-4">{user.age.toString()}</td>
-							<td className="px-6 py-4">{user.gender == 1 ? 'Male' : 'Female'}</td>
-							<td className="px-6 py-4">{vaccineStatusToString(user)}</td>
-							<td className="px-6 py-4">{user.district}</td>
-							<td className="px-6 py-4">{user.symptomsDetails === '' ? 'N/A' : user.symptomsDetails}</td>
-							<td className="px-6 py-4">{user.isDead ? 'Yes' : 'No'}</td>
-						</tr>
-					))}
+					{data.iterableList
+						.sort((a: any, b: any) => {
+							if (typeof a.patientId === 'bigint' && typeof b.patientId === 'bigint') {
+								return a.patientId < b.patientId ? -1 : a.patientId > b.patientId ? 1 : 0;
+							}
+							return a.patientId - b.patientId;
+						})
+						.map((user) => (
+							<tr key={user.patientId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+								<td className="px-6 py-4 whitespace-nowrap dark:text-white">{user.patientId && user.patientId.toString()}</td>
+								<td className="px-6 py-4">{user.age && user.age.toString()}</td>
+								<td className="px-6 py-4">{user.gender && user.gender == 1 ? 'Male' : 'Female'}</td>
+								<td className="px-6 py-4">{vaccineStatusToString(user)}</td>
+								<td className="px-6 py-4">{user.district && user.district}</td>
+								<td className="px-6 py-4">{user.symptomsDetails && (user.symptomsDetails === '' ? 'N/A' : user.symptomsDetails)}</td>
+								<td className="px-6 py-4">{user.isDead && user.isDead ? 'Yes' : 'No'}</td>
+							</tr>
+						))}
 				</tbody>
 			</table>
 		</div>

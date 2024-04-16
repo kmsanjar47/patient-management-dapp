@@ -9,7 +9,7 @@ if (typeof window !== 'undefined' && window.ethereum) {
 }
 
 // Contract address
-const contractAddress = '0x07fFd50896BA235A274570bdf6f296C13e73dFBf'; // Update with your contract address
+const contractAddress = '0x04A7E26D166b88149fd1C24c4e18F516A7cB262e'; // Update with your contract address
 
 // Create contract instance
 let contract: any;
@@ -102,7 +102,6 @@ export const getPatientDataList = async () => {
 	};
 };
 
-
 // export const getUpdatedDataList = async (iterableList:any) => {
 // 	// Call contract method to get patient data list
 // 	const maxCovidDistrict = findMostFrequentDistrict(iterableList);
@@ -137,11 +136,10 @@ export const checkIfAlreadyPatient = async (address: string): Promise<boolean> =
 	return isPatient;
 };
 
-export const  checkIfFullyVaccinated = async (userAddress: string): Promise<boolean> => {
-	
-  const isFullyVaccinated = await contract.methods.checkIfFullyVaccinated(userAddress).call({ from: userAddress });
-  console.log(isFullyVaccinated);
-  return isFullyVaccinated;
+export const checkIfFullyVaccinated = async (userAddress: string): Promise<boolean> => {
+	const isFullyVaccinated = await contract.methods.checkIfFullyVaccinated(userAddress).call({ from: userAddress });
+	console.log(isFullyVaccinated);
+	return isFullyVaccinated;
 };
 /////////////// Internal Actions ///////////////
 
